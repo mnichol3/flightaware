@@ -59,13 +59,13 @@ class TrackLog:
         namespaces = {'default':"http://www.opengis.net/kml/2.2",
                       'google': "http://www.google.com/kml/ext/2.2"}
 
-        if (not isfile(self.path)):
-            raise FileNotFoundError('File does not exist {}'.format(self.path))
+        if (not isfile(self.f_path)):
+            raise FileNotFoundError('File does not exist {}'.format(self.f_path))
 
-        track_tree = ET.parse(self.path)
+        track_tree = ET.parse(self.f_path)
         root = track_tree.getroot()
 
-        for document in root.findall('default:Document', namespaces):
+        for doc in root.findall('default:Document', namespaces):
 
             # Get the three Placemark nodes
             placemarks = doc.findall('default:Placemark', namespaces)
@@ -96,7 +96,7 @@ class TrackLog:
             apt_name = name.text.split(' ')[0]
 
         # Get the coordinates of the airport
-        for name in curr.findall('default:Point', namespaces):
+        for name in placemark.findall('default:Point', namespaces):
             for p in name.findall('default:coordinates', namespaces):
                 apt_coords = p.text
 
@@ -125,7 +125,7 @@ class TrackLog:
             self.flight_num = name.text
 
         # Get time stamps and track coords
-        for track_node in curr.findall('google:Track', namespaces):
+        for track_node in placemark.findall('google:Track', namespaces):
             for alt_mode in track_node.findall('default:altitudeMode', namespaces):
                 self.alt_mode = alt_mode.text
 
